@@ -63,3 +63,118 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const gallery = document.querySelector(".js-gallery");
+const modal = document.querySelector(".js-lightbox");
+const img = document.querySelector(".lightbox__image");
+const btn = document.querySelector('[data-action="close-lightbox"]');
+
+const items = []
+
+galleryItems.forEach(item => {
+const preview = item.preview;
+const original = item.original;
+const description = item.description;
+  item = `
+<li class="gallery__item">
+<a href="#" class="gallery__link">
+<img src="${preview}" data-source="${original}" class="gallery__image" alt="${description}">
+</a>
+</li>`
+  items.push(item)
+});
+
+// window.addEventListener("keydown", closeModalUseEsc);
+
+// function createGallery(gallery) {
+//   return gallery
+//     .map(({ preview, original, description}, index) => {
+//       return `<li class = "gallery__item">
+//       <a class = "gallery__link" href="${original}">
+//       <img class ="gallery__image" data-index="${index}" src="${preview}" data-source="${description}"/>
+//       </a>
+//       </li>`;
+//     })
+//     .join("");
+// };
+
+gallery.insertAdjacentHTML('afterbegin', items.join(" "))
+gallery.addEventListener("click", onImgClick);
+btn.addEventListener("click", closeModal);
+
+
+// function onImgClick(e) { 
+//   const targetImg = e.target;
+//   console.log("event target: ", targetImg);
+//   modal.classList.toggle("is-open");
+//   img.src = targetImg.dataset.source;
+// };
+
+// function onCloseModal(e) {
+//   const targetCloseBtn = e.target;
+//   modal.classList.toggle("is-open")
+//     img.src = ""
+// };
+
+let indexImg = 0;
+
+function onImgClick(e) {
+  e.preventDefault();
+  if (e.target.nodeName === "IMG") {
+    openModal();
+    indexImg = +e.target.dataset.index;
+  }
+  assignCurrentSrcForLightboxImg(e);
+};
+
+function openModal(){
+modal.classList.add("is-open");
+modal.addEventListener('click', closeModalByBtnAndOverlay);
+window.addEventListener('keydown', closeModalUseEsc);
+};
+
+function closeModal() {
+  modal.classList.remove("is-open");
+};
+
+function closeModalByBtnAndOverlay(e) {
+  if (e.target.nodeName === "BUTTON" || e.target.nodeName === "DIV") {
+    closeModal();
+    changeSrcForLightboxImg("","");
+  }
+};
+
+function closeModalUseEsc(e) {
+  if (e.target.nodeName === "Escape") {
+    closeModal();
+    changeSrcForLightboxImg("","");
+  }
+};
+
+function assignCurrentSrcForLightboxImg(e) {
+  const currentImgLink = e.target.dataset.source;
+  const currentImgAlt = e.target.alt;
+  changeSrcForLightboxImg(currentImgLink, currentImgAlt);
+};
+
+function changeSrcForLightboxImg(src, alt){
+  img.src = src;
+  img.alt = alt;
+};
+
+window.addEventListener("keydown", slick);
+const galleryLength = gallery.length -1;
+
+function slick(e) {
+  if(e.code === "ArrowLeft"){
+    indexImg -=1;
+    if (indexImg < 0) indexImg = galleryLength;
+  }
+  if (e.code === "ArrowRight"){
+    indexImg +=1;
+    if(indexImg > galleryLength) indexImg = 0;
+  }
+  const item = gallery[indexImg];
+  changeSrcForLightboxImg(item.original, item.description);
+};
+console.log(item.original)
