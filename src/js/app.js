@@ -81,8 +81,8 @@ const increment = () => {
 }
 
 const decrement = () => {
-    if (imgIndex === images.length - 1){
-       imgIndex = 0;
+    if (imgIndex === 0){
+       imgIndex = images.length - 1;
        return ;
     }
     imgIndex--;
